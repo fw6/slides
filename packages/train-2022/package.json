@@ -1,0 +1,26 @@
+{
+    "name": "train-2022",
+    "private": true,
+    "scripts": {
+        "build": "slidev build",
+        "dev": "slidev --open",
+        "export": "slidev export"
+    },
+    "dependencies": {
+        "@nuxt/kit": "npm:@nuxt/kit-edge@3.0.0-rc.5-27632091.f5fd58e",
+        "@slidev/cli": "^0.34.3",
+        "@slidev/theme-default": "*",
+        "@slidev/theme-seriph": "*",
+        "monaco-editor": "^0.33.0",
+        "playwright-chromium": "^1.23.4",
+        "slidev-theme-academic": "^1.1.0"
+    },
+    "devDependencies": {
+        "@iconify-json/logos": "^1.1.10",
+        "@iconify-json/uim": "^1.1.2",
+        "postcss": "^8.2.14"
+    },
+    "volta": {
+        "node": "16.16.0"
+    }
+}

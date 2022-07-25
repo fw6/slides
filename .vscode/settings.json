@@ -1,0 +1,9 @@
+{
+    "cSpell.words": [
+        "slidev"
+    ],
+    "windicss.includeLanguages": {
+        "markdown": "html",
+        "md": "html",
+    }
+}
