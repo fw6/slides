@@ -174,3 +174,154 @@ doc/*.pdf
 若要查看已暂存的将要添加到下次提交里的内容，可以用`git diff --staged`命令。这条命令将比对已暂存文件与最后一次提交的文件差异。
 
 > `git diff`本身只显示尚未暂存的改动，而不是自上次提交以来所做的所有改动。
+
+暂存区准备就绪之后，就可以提交了。运行提交命令：
+```shell
+$ git commit
+```
+会启动文本编辑器来输入提交说明.
+> 启动的编辑器是通过SHELL的环境变量EDITOR指定的，一般为vim或emacs
+
+也可以在命令后面加上`-m`参数，将提交说明直接跟在命令后面。
+
+提交时记录的是放在暂存区的快照。任何还未暂存文件仍然保持已修改状态。每次运行提交命令都是对项目进行一次快照。
+
+在提交时，给`git commit`加上-a选项，Git会自动把所有已经**跟踪过**的文件暂存起来一并提交，从而跳过`git add`步骤。
+
+要从Git中移除某个文件，就必须要从已跟踪文件清单中移除（确切地说，是从暂存区域移除），然后提交。可以用`git rm`命令完成此项工作，并连带从工作目录中删除指定的文件，这样以后就不会出现在未跟踪文件清单中了。
+
+希望将文件从Git仓库中删除，但仍然希望保留在当前工作目录中，可以使用`--cached`选项：
+```shell
+$ git rm --cached log/\*.log
+```
+
+## 移动文件
+
+Git并不跟踪文件移动操作，只是在内部记录下文件移动的操作。所以，如果要移动文件，只需在Git中把它们重命名即可：
+```shell
+$ git mv file_from file_to
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+    renamed:    README.md -> README
+```
+
+其实，运行`git mv`就相当于运行了下面三条命令：
+```shell
+$ mv README.md README
+$ git rm README.md
+$ git add README
+```
+
+这样分开操作，Git也能知道是一次重命名操作，两者是一样的。
+
+## 查看提交历史
+
+查看提交历史，可以使用`git log`命令。不加任何参数的话，会按提交时间列出所有的更新，最近的更新排在最上面。
+
+`git log`常用的选项是`-p`或`--patch`，它会显示每次提交引入的差异。也可以限制显示的日志数量，如`-2`表示只显示最近的两次更新。
+```shell
+$ git log -p -2
+```
+该选项除了显示基本信息之外，还附带了每次提交的变化。当进行代码审查，或者快速浏览某个搭档的提交所带来的变化时，这个参数就非常有用。
+
+使用`git log`可以使用`--stat`查看提交的简略统计信息：
+```shell
+$ git log --stat
+```
+
+`--pretty`选项可以指定使用不同于默认格式的方式展示提交历史。比如，使用`oneline`参数，可以将每个提交放在一行显示，这样每个提交就只占一行了：
+```shell
+$ git log --pretty=oneline
+```
+其他还有：
+- `short`
+- `full`
+- `fuller`
+暂时的信息基本一致，但是详尽程度不一
+
+`--pretty`选项还可以定制输出的格式。`format`参数可以指定输出的格式，然后指定相应的占位符。比如，`%h`表示提交对象（commit）的简短哈希值，`%an`表示作者名，`%ar`表示作者修订日期，`%s`表示提交说明。
+```shell
+$ git log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+```
+
+下表列出了常用的选项：
+| 选项 | 说明                                        |
+| ---- | ------------------------------------------- |
+| %H   | 提交对象（commit）的完整哈希字串            |
+| %h   | 提交对象的简短哈希字串                      |
+| %T   | 树对象（tree）的完整哈希字串                |
+| %t   | 树对象的简短哈希字串                        |
+| %P   | 父对象（parent）的完整哈希字串              |
+| %p   | 父对象的简短哈希字串                        |
+| %an  | 作者（author）的名字                        |
+| %ae  | 作者的电子邮件地址                          |
+| %ad  | 作者修订日期（可以用 --date= 选项定制格式） |
+| %ar  | 作者修订日期，按多久以前的方式显示          |
+| %cn  | 提交者(committer)的名字                     |
+| %ce  | 提交者的电子邮件地址                        |
+| %cd  | 提交日期                                    |
+| %cr  | 提交日期，按多久以前的方式显示              |
+| %s   | 提交说明                                    |
+
+不知你们有没有发现有作者还有个提交者。其实作者指的是实际做出修改的人，提交者指的是最后将此工作成果提交的人。例如，当你为某个项目发布补丁，某个核心成员将补丁并入了项目，那么这个核心成员就是提交者，而你则是作者。
+
+当`oneline`和`format`选项与`--graph`选项配合使用时，可以看到分支合并图：
+```shell
+$ git log --pretty=format:'%h %s' --graph
+*   bbbce290 (HEAD -> develop, origin/develop) Merge branch 'content/dev_s141_20231221' into develop
+|\
+| * 6a62441b (origin/content/dev_s141_20231221) fix: creation center change show label logic
+* |   a36f6c07 Merge remote-tracking branch 'origin/kol/dev_s141_20231221' into develop
+```
+
+`--graph`选项会在左侧用ASCII字符绘制一幅表示分支合并历史的图形。
+
+下表列出了`git log`常用的选项：
+| 选项            | 说明                                                                                                  |
+| --------------- | ----------------------------------------------------------------------------------------------------- |
+| -p              | 按补丁格式显示每个更新之间的差异。                                                                    |
+| --stat          | 显示每次更新的文件修改统计信息。                                                                      |
+| --shortstat     | 只显示 -stat 中最后的行数修改添加移除统计。                                                           |
+| --name-only     | 仅在提交信息后显示已修改的文件清单。                                                                  |
+| --name-status   | 显示新增、修改、删除的文件清单。                                                                      |
+| --abbrev-commit | 仅显示 SHA-1 的前几个字符，而非所有的 40 个字符。                                                     |
+| --relative-date | 使用较短的相对时间显示（比如，“2 weeks ago”）。                                                       |
+| --graph         | 显示 ASCII 图形表示的分支合并历史。                                                                   |
+| --pretty        | 使用其他格式显示历史提交信息。可用的选项包括 oneline、short、full、fuller 和 format（后跟指定格式）。 |
+| --oneline       | `--pretty=oneline --abbrev-commit` 的简写。                                                           |
+
+
+如果觉得输出信息太多，可以使用`-n`选项限制显示的日志数量。不过在实际展示log时，Git默认会将所有输出传送到分页程序中，所以你一次只会看到一页的内容。
+> 可以配置默认分页程序，如`git config --global core.pager 'delta'`
+
+类似`--since`和`--until`这种按照时间做限制的选项很有用。
+```shell
+$ git log --since=2.weeks
+```
+
+这个命令可以是确定日期，也可以是相对日期。还可以过滤指定条件的提交。`--author`选项显示指定作者的提交，`--grep`选项搜索提交说明中的关键字。
+另一个很有用的过滤器是`-S`选项，只显示添加或移除了某个关键字的提交。
+```shell
+$ git log -S function_name
+```
+
+下表列出了`git log`常用的过滤选项：
+| 选项              | 说明                               |
+| ----------------- | ---------------------------------- |
+| -(n)              | 仅显示最近的 n 条提交              |
+| --since, --after  | 仅显示指定时间之后的提交。         |
+| --until, --before | 仅显示指定时间之前的提交。         |
+| --author          | 仅显示指定作者相关的提交。         |
+| --committer       | 仅显示指定提交者相关的提交。       |
+| --grep            | 仅显示含指定关键字的提交           |
+| -S                | 仅显示添加或移除了某个关键字的提交 |
+
+下方命令只会显示最近两周内，feng.w提交的，包含`fix`关键字的提交(不包含合并提交)：
+```shell
+$ git log --since=2.weeks --author=feng.w --grep=fix --no-merges
+```
+
+## 撤销操作
