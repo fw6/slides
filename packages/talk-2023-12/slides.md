@@ -293,20 +293,24 @@ growY: 120
 -->
 
 ---
-layout: two-cols-header
+layout: intro
 growX: 120
 growY: 20
 ---
 
 ### `references`引用
 
-::left::
+<div mt-5 />
 
 <v-click>
 
 ```shell
-$ echo 4e5825 > .git/refs/heads/master
+$ echo ffda080b84b4a640d811a9d653151675dc76ea33 > .git/refs/heads/master
 ```
+
+> ⚠️ ‼️: 需要完整的SHA-1值
+
+<div pt-4 />
 
 ```shell
 $ git update-ref refs/heads/master 4e5825
@@ -314,11 +318,9 @@ $ git update-ref refs/heads/master 4e5825
 
 </v-click>
 
-::right::
-
 <v-click>
 
-![Alt text](/commit_test_refs_branch.png){.ml-8.h-60.relative.top--24}
+![Alt text](/commit_test_refs_branch.png){.mt-8.h-60}
 
 </v-click>
 
