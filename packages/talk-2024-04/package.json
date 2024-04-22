@@ -1,0 +1,11 @@
+{
+    "name": "talk-2024.04",
+    "type": "module",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "slidev",
+        "build": "slidev build --base /2024/rust_ffi/ --out ../../dist/2024/rust_ffi",
+        "export": "slidev export --per-slide --output ./rust_ffi.pdf"
+    }
+}

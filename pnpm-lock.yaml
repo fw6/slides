@@ -50,6 +50,8 @@ importers:
 
   packages/talk-2023-12: {}
 
+  packages/talk-2024-04: {}
+
   packages/train-2022:
     dependencies:
       '@nuxt/kit':
